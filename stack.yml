@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+  dbos:
+    image: mysql:5.7
+    volumes:
+      - db_storage:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: drupal_db 
+      MYSQL_ROOT_PASSWORD: redhat
+      MYSQL_USER: mayank
+      MYSQL_PASSWORD: redhat
+    restart: always
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  drupal_os:
+    image: drupal:latest
+    volumes:
+      - drupal_site_storage:/var/www/html
+    restart: always
+    depends_on:
+      - dbos
+    ports:
+      - 8082:80
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+volumes:
+    db_storage:
+    drupal_site_storage:
